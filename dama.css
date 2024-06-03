@@ -1,0 +1,102 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+}
+
+#tabela {
+    height: 100px;
+    width: 300px;
+    margin-left: 50px; 
+    margin-bottom: 10px;
+}
+
+.placares {
+    border: 1px inset black;
+    width: 48%;
+    height: 70%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.placaresCabecalho {
+    width: 100%;
+    background-color: #ddd;
+    font-weight: bold;
+    text-align: center;
+    padding: px;
+}
+
+#placar1 {
+    border: 5px solid green;   
+    justify-content: center;
+    background-color: #000;
+    color: #FFF;
+}
+
+#placar2 {
+    justify-content:center ;
+    background-color: red;
+    color: #FFF;
+}
+
+/* Estilizando o tabuleiro */
+#tabuleiro {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    width: 640px;
+    height: 640px;
+    border: 20px solid rgba(105, 46, 7, 0.589);
+    margin: 10px;
+    color:#8b451300;
+}
+
+
+/* Estilizando as casas do tabuleiro */
+.casa {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.preta {
+    background-color: #8B4513;
+}
+
+.branca {
+    background-color: #F5F5F5;
+}
+
+/* Estilizando as peças */
+.peca {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1000;
+    position: absolute; 
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%); 
+}
+
+.peca.vermelha {
+    background-color: red;
+}
+
+.peca.preta {
+    background-color: black;
+}
+.peca.selecionada {
+    border: solid green 5px;
+}
