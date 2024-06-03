@@ -299,3 +299,4 @@ night_mode.addEventListener('click', ()=>{
 
 //BACKGROUND
 let body = document.querySelector('body')
+let casadark = document.querySelector('')

@@ -20,8 +20,8 @@
     </div>
 
     <div id="placarCabecalho" class="placaresCabecalho">Placar</div>
-        <div id="placar1" class="placares">Placar Jogador 1</div>
-        <div id="placar2" class="placares">Placar Jogador 2</div>
+        <div id="placar1" class="placares">Jogador 1</div>
+        <div id="placar2" class="placares">Jogador 2</div>
     </div>
 </div>
     <script src="dama.js"></script>
