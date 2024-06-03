@@ -13,6 +13,12 @@
 <button onclick="location.reload()" style="width: 150px; height: 50px; margin-left: 20px; margin-right: 20px;">Reiniciar</button>
     <div id="tabuleiro"></div>
     <div id="tabela">
+
+    <!-- Modo Noturno -->
+    <div class="night_mode" id="night_mode">
+        <div class="indicador"></div>
+    </div>
+
     <div id="placarCabecalho" class="placaresCabecalho">Placar</div>
         <div id="placar1" class="placares">Placar Jogador 1</div>
         <div id="placar2" class="placares">Placar Jogador 2</div>

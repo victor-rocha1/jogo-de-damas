@@ -1,3 +1,15 @@
+/* Variáveis de cores */
+:root {
+    --black: #000;
+    --white: #ddd;
+    --green: #008000;
+    --red: #ff0000;
+    --brown: rgba(105, 46, 7, 0.589);
+    --gray: #4d4d4d;
+    --trilho: rgba(128, 128, 128, 0.85);
+    --dark: #212121;
+}
+
 .container {
     display: flex;
     align-items: center;
@@ -8,12 +20,12 @@
 #tabela {
     height: 100px;
     width: 300px;
-    margin-left: 50px; 
+    margin-left: 50px;
     margin-bottom: 10px;
 }
 
 .placares {
-    border: 1px inset black;
+    border: 1px inset var(--black);
     width: 48%;
     height: 70%;
     display: flex;
@@ -28,23 +40,23 @@
 
 .placaresCabecalho {
     width: 100%;
-    background-color: #ddd;
+    background-color: var(--white);
     font-weight: bold;
     text-align: center;
     padding: px;
 }
 
 #placar1 {
-    border: 5px solid green;   
+    border: 5px solid var(--green);
     justify-content: center;
-    background-color: #000;
-    color: #FFF;
+    background-color: var(--black);
+    color: var(--white);
 }
 
 #placar2 {
-    justify-content:center ;
-    background-color: red;
-    color: #FFF;
+    justify-content: center;
+    background-color: var(--red);
+    color: var(--white);
 }
 
 /* Estilizando o tabuleiro */
@@ -53,9 +65,9 @@
     grid-template-columns: repeat(8, 1fr);
     width: 640px;
     height: 640px;
-    border: 20px solid rgba(105, 46, 7, 0.589);
+    border: 20px solid var(--brown);
     margin: 10px;
-    color:#8b451300;
+    color: var(--black);
 }
 
 
@@ -84,19 +96,58 @@
     border-radius: 50%;
     cursor: pointer;
     z-index: 1000;
-    position: absolute; 
-    top: 50%; 
+    position: absolute;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); 
+    transform: translate(-50%, -50%);
 }
 
 .peca.vermelha {
-    background-color: red;
+    background-color: var(--red);
 }
 
 .peca.preta {
-    background-color: black;
+    background-color: var(--black);
 }
+
 .peca.selecionada {
-    border: solid green 5px;
+    border: solid var(--green) 5px;
+}
+
+.casa span.posicao {
+    display: none;
+}
+
+/* MODO NOTURNO */
+.night_mode {
+    width: 100px;
+    height: 50px;
+    background-color: var(--trilho);
+    border-radius: 150px;
+    position: relative;
+}
+
+.night_mode .indicador {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--white);
+    transform: scale(.8);
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    transition: .5s;
+}
+
+.night_mode.dark {
+    background-color: var(--gray);
+}
+
+.night_mode.dark .indicador {
+    left: 50px;
+    background-color: var(--black);
+}
+
+body.dark {
+    background-color: var(--dark);
 }

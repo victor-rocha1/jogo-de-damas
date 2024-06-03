@@ -285,3 +285,17 @@ let jogadorVermelhas = new Jogador("Jogador 2","vermelha")
 let jogo = new Jogo(jogadorPretas, jogadorVermelhas, tabuleiro);
 jogo.jogadorDaRodada = jogadorPretas;
 jogo.inicializa();
+
+
+//MODO NOTURNO
+
+//BOTÃO TRILHO
+const night_mode = document.getElementById("night_mode") 
+
+night_mode.addEventListener('click', ()=>{
+    night_mode.classList.toggle('dark')
+    body.classList.toggle('dark')
+})
+
+//BACKGROUND
+let body = document.querySelector('body')
