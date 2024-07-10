@@ -1,52 +1,76 @@
-class Jogo{
-    constructor(jogadorPretas,jogadorVermelhas, tabuleiro){
-        this.jogadorPretas=jogadorPretas;
-        this.jogadorVermelhas=jogadorVermelhas;
-        this.jogadorDaRodada=null;
+class Jogo {
+    constructor(jogadorPretas, jogadorVermelhas, tabuleiro) {
+        this.jogadorPretas = jogadorPretas;
+        this.jogadorVermelhas = jogadorVermelhas;
+        this.jogadorDaRodada = null;
         this.tabuleiro = tabuleiro;
         tabuleiro.setJogo(this);
+        this.temporizador = null;
     }
-    inicializa(){
+    inicializa() {
         this.tabuleiro.inicializa();
         this.tabuleiro.distribuiPecas();
+        this.iniciaTemporizador();
+        autoPlay();
     }
-    mudaJogador(){
-        if(this.jogadorPretas===this.jogadorDaRodada){
-            this.jogadorDaRodada=this.jogadorVermelhas;
-            var palacar2 = document.getElementById('placar2');
-            palacar2.style.border = "5px solid green";
+    iniciaTemporizador() {
+        this.temporizador = setInterval(() => {
+            this.mudaJogador();
+        }, 15000); // 15 segundos
+    }
+    mudaJogador() {
+        if (this.jogadorPretas === this.jogadorDaRodada) {
+            this.jogadorDaRodada = this.jogadorVermelhas;
+            var placar2 = document.getElementById('placar2');
+            placar2.style.border = "5px solid green";
             var placar1 = document.getElementById('placar1');
             placar1.style.border = "1px solid black";
-        }else if(this.jogadorVermelhas===this.jogadorDaRodada){
+        } else if (this.jogadorVermelhas === this.jogadorDaRodada) {
             this.jogadorDaRodada = this.jogadorPretas;
             var placar1 = document.getElementById('placar1');
             placar1.style.border = "5px solid green";
-            var palacar2 = document.getElementById('placar2');
-            palacar2.style.border = "1px solid black";
-        }else{
-            alert('Jogo ainda não inciado.')
+            var placar2 = document.getElementById('placar2');
+            placar2.style.border = "1px solid black";
+        } else {
+            alert('Jogo ainda não iniciado.');
         }
     }
-
-
 }
 
-class Jogador{
-    constructor(nome, cor){
+function autoPlay(){
+    audio = document.querySelector('audio');
+    audio.currentTime = 0; 
+    audio.play();
+}
+
+class Jogador {
+    constructor(nome, cor) {
         this.cor = cor;
         this.nome = nome;
         this.pecas = [];
         this.pecaSelecionada = null;
         this.placar = 0;
     }
-    addPeca(peca){
+    addPeca(peca) {
         this.pecas.push(peca);
     }
-    aumentaPlacar(){
+    aumentaPlacar() {
         this.placar++;
         document.getElementById(this.cor === "preta" ? "placar1" : "placar2").innerText = this.placar;
-        if(this.placar === 12){
-            alert(`Jogador das peças ${this.cor === "preta" ? "pretas" : "vermelhas"} venceu!`);
+        if (this.placar === 12) {
+
+            const modal = document.getElementById('modal');
+            modal.style.display = "block";
+            const pecas = document.getElementsByClassName('peca');
+            peca.style.display = "none";
+
+            if(this.cor === "preta"){
+               const vencedor1 = document.getElementById('vencedor1');
+               vencedor1.style.display = "block";
+            }else{
+                const vencedor2 = document.getElementById('vencedor2');
+                vencedor2.style.display = "block";
+            }
         }
     }
 }
@@ -56,7 +80,7 @@ class TipoMovimento {
     static CAPTURA = 2;
 }
 
-class Peca{
+class Peca {
     constructor(casa, classe, jogador) {
         this.jogadorDonoDaPeca = jogador;
         this.casa = casa;
@@ -66,11 +90,11 @@ class Peca{
         this.tipoMovimento = TipoMovimento.SIMPLES;
         this.pecaCapturada = null;
         this.span.onclick = (event) => {
-            if(this.casa.tabuleiro.jogo.jogadorDaRodada === this.jogadorDonoDaPeca){
+            if (this.casa.tabuleiro.jogo.jogadorDaRodada === this.jogadorDonoDaPeca) {
                 this.casa.tabuleiro.limpaSelecao();
                 this.span.classList.add('selecionada');
                 this.jogadorDonoDaPeca.pecaSelecionada = this;
-            }else{
+            } else {
                 alert('A peça não é sua!');
             }
             event.stopPropagation();
@@ -80,7 +104,7 @@ class Peca{
     }
 }
 
-class Casa{
+class Casa {
     constructor(tabuleiro, linha, coluna) {
         this.tabuleiro = tabuleiro;
         this.linha = linha;
@@ -90,21 +114,22 @@ class Casa{
         let div = document.createElement('div');
         this.div = div;
         this.div.onclick = () => {
-            if(this.movimentoValido()){
+            if (this.movimentoValido()) {
                 var pecaSelecionada = this.tabuleiro.jogo.jogadorDaRodada.pecaSelecionada;
-                if(pecaSelecionada.tipoMovimento === TipoMovimento.SIMPLES){
+                if (pecaSelecionada.tipoMovimento === TipoMovimento.SIMPLES) {
                     this.setPeca(tabuleiro.jogo.jogadorDaRodada.pecaSelecionada);
-                }else if(pecaSelecionada.tipoMovimento === TipoMovimento.CAPTURA){
+                    this.tabuleiro.jogo.mudaJogador();  // Adiciona a chamada aqui
+                } else if (pecaSelecionada.tipoMovimento === TipoMovimento.CAPTURA) {
                     this.setPeca(tabuleiro.jogo.jogadorDaRodada.pecaSelecionada);
                     var pecaCapturada = pecaSelecionada.pecaCapturada;
                     pecaCapturada.span.parentElement.removeChild(pecaCapturada.span);
                     pecaCapturada.casa.peca = null;
-                    // Atualiza o placar
                     pecaSelecionada.jogadorDonoDaPeca.aumentaPlacar();
-                }else{
+                    this.tabuleiro.jogo.mudaJogador();  // Adiciona a chamada aqui
+                } else {
                     alert("Erro: Tipo de movimento não definido");
                 }
-            }else{
+            } else {
                 alert('Movimento inválido');
                 return;
             }
@@ -113,27 +138,27 @@ class Casa{
 
         this.tabuleiro.div.appendChild(div);
         div.innerHTML = "<span class='posicao'>" + linha + "," + coluna + "</span>";
-        if(this.linha % 2 == 0 && this.coluna % 2 == 0){
+        if (this.linha % 2 == 0 && this.coluna % 2 == 0) {
             div.className = "casa preta";
-        }else if(this.linha % 2 == 0 && this.coluna % 2 != 0){
+        } else if (this.linha % 2 == 0 && this.coluna % 2 != 0) {
             div.className = "casa branca";
-        }else if(this.linha % 2 != 0 && this.coluna % 2 == 0){
+        } else if (this.linha % 2 != 0 && this.coluna % 2 == 0) {
             div.className = "casa branca";
-        }else if(this.linha % 2 != 0 && this.coluna % 2 != 0){
+        } else if (this.linha % 2 != 0 && this.coluna % 2 != 0) {
             div.className = "casa preta";
         }
     }
 
-    movimentoValido(){
+    movimentoValido() {
         var pecaSelecionada = this.tabuleiro.jogo.jogadorDaRodada.pecaSelecionada;
-        if(this.casaJaPossuiUmaPca()){
-            return false;             
+        if (this.casaJaPossuiUmaPeca()) {
+            return false;
         }
-        if(!pecaSelecionada){
+        if (!pecaSelecionada) {
             return false;
         }
         var casaAtual = pecaSelecionada.casa;
-        if(this.casaAtualIgualCasaFutura(casaAtual)){
+        if (this.casaAtualIgualCasaFutura(casaAtual)) {
             return false;
         }
         var linhaAtual = casaAtual.linha;
@@ -144,26 +169,26 @@ class Casa{
         var tamanhoDoPasso = 1;
         movimentoValido = this.passoValido(linhaAtual, linhaFutura, colunaAtual, colunaFutura, tamanhoDoPasso);
         pecaSelecionada.tipoMovimento = TipoMovimento.SIMPLES;
-        if(!movimentoValido){
+        if (!movimentoValido) {
             tamanhoDoPasso = 2; // Valida tentativa de captura
             movimentoValido = this.passoValido(linhaAtual, linhaFutura, colunaAtual, colunaFutura, tamanhoDoPasso);
-            if(movimentoValido){
+            if (movimentoValido) {
                 const casa = this.selecionaCasaComPecaQueSeraCapturada(linhaAtual, linhaFutura, colunaAtual, colunaFutura);
-                if(casa.vazia()){
+                if (casa.vazia()) {
                     movimentoValido = false;
-                    
-                }else{
+
+                } else {
                     pecaSelecionada.tipoMovimento = TipoMovimento.CAPTURA;
                     pecaSelecionada.pecaCapturada = casa.peca;
                 }
             }
-        }else{
+        } else {
             pecaSelecionada.tipoMovimento = TipoMovimento.SIMPLES;
         }
         return movimentoValido;
     }
 
-    passoValido(linhaAtual, linhaFutura, colunaAtual, colunaFutura, tamanhoDoPasso){
+    passoValido(linhaAtual, linhaFutura, colunaAtual, colunaFutura, tamanhoDoPasso) {
         if (linhaAtual + tamanhoDoPasso == linhaFutura && colunaAtual + tamanhoDoPasso == colunaFutura) {
             return true;
         } else if (linhaAtual + tamanhoDoPasso == linhaFutura && colunaAtual - tamanhoDoPasso == colunaFutura) {
@@ -172,12 +197,12 @@ class Casa{
             return true;
         } else if (linhaAtual - tamanhoDoPasso == linhaFutura && colunaAtual + tamanhoDoPasso == colunaFutura) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    selecionaCasaComPecaQueSeraCapturada(linhaAtual, linhaFutura, colunaAtual, colunaFutura){
+    selecionaCasaComPecaQueSeraCapturada(linhaAtual, linhaFutura, colunaAtual, colunaFutura) {
         if (linhaAtual + 2 == linhaFutura && colunaAtual + 2 == colunaFutura) {
             return this.tabuleiro.casas[linhaAtual + 1][colunaAtual + 1];
         } else if (linhaAtual + 2 == linhaFutura && colunaAtual - 2 == colunaFutura) {
@@ -186,36 +211,36 @@ class Casa{
             return this.tabuleiro.casas[linhaAtual - 1][colunaAtual - 1];
         } else if (linhaAtual - 2 == linhaFutura && colunaAtual + 2 == colunaFutura) {
             return this.tabuleiro.casas[linhaAtual - 1][colunaAtual + 1];
-        }else{
+        } else {
             return null;
         }
     }
 
-    casaJaPossuiUmaPca(){
-        if(this.peca){
+    casaJaPossuiUmaPeca() {
+        if (this.peca) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    vazia(){
-        if(!this.peca){
+    vazia() {
+        if (!this.peca) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    casaAtualIgualCasaFutura(){
-        if(this === tabuleiro.jogo.jogadorDaRodada.pecaSelecionada.casa)
+    casaAtualIgualCasaFutura() {
+        if (this === tabuleiro.jogo.jogadorDaRodada.pecaSelecionada.casa)
             return true;
         else
             return false;
     }
 
-    setPeca(peca){
-        if(peca){
+    setPeca(peca) {
+        if (peca) {
             peca.casa.peca = null; // Remove a referência da casa antiga
             this.peca = peca;
             peca.casa = this; // Adiciona a referência da casa nova
@@ -232,67 +257,66 @@ class Tabuleiro {
         this.jogo = null;
     }
 
-    setJogo(jogo){
+    setJogo(jogo) {
         this.jogo = jogo;
     }
 
-    inicializa(){
-        for(var linha = 0; linha < 8; linha++){
-            for(var coluna = 0; coluna < 8; coluna++){
+    inicializa() {
+        for (var linha = 0; linha < 8; linha++) {
+            for (var coluna = 0; coluna < 8; coluna++) {
                 let casa = new Casa(this, linha, coluna);
             }
         }
     }
-    distribuiPecas(){
-        for(var linha = 0; linha < 8; linha++){
-            for(var coluna = 0; coluna < 8; coluna++){
-                if(linha <= 2){
+    distribuiPecas() {
+        for (var linha = 0; linha < 8; linha++) {
+            for (var coluna = 0; coluna < 8; coluna++) {
+                if (linha <= 2) {
                     this.distribuiPecaParaJogador(this.jogo.jogadorPretas, linha, coluna, "peca preta");
                 }
-                else if(linha >= 5){
+                else if (linha >= 5) {
                     this.distribuiPecaParaJogador(this.jogo.jogadorVermelhas, linha, coluna, "peca vermelha");
                 }
             }
         }
     }
-    distribuiPecaParaJogador(jogador, linha, coluna, classe){
+    distribuiPecaParaJogador(jogador, linha, coluna, classe) {
         let casa = this.casas[linha][coluna];
-        if(this.casaValida(casa)){
+        if (this.casaValida(casa)) {
             let p = new Peca(casa, classe, jogador);
             jogador.addPeca(p);
-            this.pecas.splice(0,0,p);
+            this.pecas.splice(0, 0, p);
         }
     }
-    limpaSelecao(){
+    limpaSelecao() {
         for (let index = 0; index < this.pecas.length; index++) {
             const peca = this.pecas[index];
-            if(peca.span.classList.contains('selecionada'))
+            if (peca.span.classList.contains('selecionada'))
                 peca.span.classList.remove('selecionada');
         }
     }
-    casaValida(casa){
-        if(casa.div.classList.contains('preta')){
+    casaValida(casa) {
+        if (casa.div.classList.contains('preta')) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 }
 
-let tabuleiro = new Tabuleiro("tabuleiro") 
-let jogadorPretas = new Jogador("Jogador 1","preta")
-let jogadorVermelhas = new Jogador("Jogador 2","vermelha")
+let tabuleiro = new Tabuleiro("tabuleiro")
+let jogadorPretas = new Jogador("Jogador 1", "preta")
+let jogadorVermelhas = new Jogador("Jogador 2", "vermelha")
 let jogo = new Jogo(jogadorPretas, jogadorVermelhas, tabuleiro);
 jogo.jogadorDaRodada = jogadorPretas;
 jogo.inicializa();
 
-
 //MODO NOTURNO
 
 //BOTÃO TRILHO
-const night_mode = document.getElementById("night_mode") 
+const night_mode = document.getElementById("night_mode")
 
-night_mode.addEventListener('click', ()=>{
+night_mode.addEventListener('click', () => {
     night_mode.classList.toggle('dark')
     body.classList.toggle('dark')
 })
